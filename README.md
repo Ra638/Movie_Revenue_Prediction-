@@ -1,1 +1,2 @@
-# Movie_Revenue_Prediction-
+# Movie Revenue Prediction
+This project predicts movie revenue using ML.
