@@ -1,1 +1,36 @@
-Binary model file placeholder
+
+# Step 1: Remove missing values
+df = df.dropna()  # Drops any rows with missing values
+
+# Step 2: Compute correlation of numerical features with 'gross'
+correlation_matrix = df.corr(numeric_only=True)
+correlation_with_gross = correlation_matrix["gross"].sort_values(ascending=False)
+
+# Step 3: Select top 3 features (excluding 'gross' itself)
+top_features = correlation_with_gross.index[1:4]  # Get top 3 correlated features
+
+# Step 4: Prepare dataset for training
+x = df[top_features]  # Select only top features as predictors
+y = df["gross"]  # Target variable
+
+# Step 5: Split dataset into training and testing sets
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+
+# Step 6: Train Optimized XGBoost Model
+best_xgb = XGBRegressor(
+    colsample_bytree=1.0,
+    learning_rate=0.01,
+    max_depth=5,
+    n_estimators=300,
+    subsample=0.8,
+    random_state=42
+)
+
+best_xgb.fit(x_train, y_train)  # Train the model
+
+# Step 7: Make Predictions
+y_pred_xgb_best = best_xgb.predict(x_test)
+
+# Step 8: Evaluate Performance
+r2_xgb_best = r2_score(y_test, y_pred_xgb_best)
+print("Optimized XGBoost R² Score:", r2_xgb_best)
